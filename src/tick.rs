@@ -5,6 +5,7 @@
 use chrono::prelude::*;
 use std::default::Default;
 use std::fmt;
+use std::ops;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
@@ -12,9 +13,13 @@ pub struct Tick {
     pub time: u64, //utc
 }
 
+pub struct TickSpan {
+    span: i64,
+}
+
 pub const MIN_TICK: Tick = Tick { time: 0 };
 pub const MAX_TICK: Tick = Tick {
-    time: 253402300799999999,
+    time: 253402300799999999, // 9999-12-31 23:59:59:999999
 };
 
 impl Tick {
@@ -39,6 +44,7 @@ impl Tick {
         Tick::to_tick(&utc)
     }
 
+    #[inline]
     pub fn to_utc(&self) -> DateTime<Utc> {
         Tick::from_tick(self)
     }
@@ -61,5 +67,32 @@ impl fmt::Display for Tick {
 impl Default for Tick {
     fn default() -> Tick {
         Tick::now()
+    }
+}
+
+impl ops::Add<TickSpan> for Tick {
+    type Output = Tick;
+    fn add(self, other: TickSpan) -> Tick {
+        Tick {
+            time: (self.time as i64 + other.span) as u64,
+        }
+    }
+}
+
+impl ops::Sub for Tick {
+    type Output = TickSpan;
+    fn sub(self, other: Tick) -> TickSpan {
+        TickSpan {
+            span: self.time as i64 - other.time as i64,
+        }
+    }
+}
+
+impl ops::Sub<TickSpan> for Tick {
+    type Output = Tick;
+    fn sub(self, other: TickSpan) -> Tick {
+        Tick {
+            time: (self.time as i64 - other.span) as u64,
+        }
     }
 }

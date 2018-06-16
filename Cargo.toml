@@ -5,3 +5,9 @@ authors = ["Xiaojun Gao <gaoxiaojun@gmail.com>"]
 
 [dependencies]
 chrono = "0.4"
+phf = "0.7.22"
+lazy_static = "1.0.1"
+bimap = "0.1.5"
+futures = "0.2.1"
+mio = "0.6.14"
+penny = "0.2.0"
